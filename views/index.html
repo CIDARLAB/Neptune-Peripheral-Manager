@@ -1,0 +1,88 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Peripheral Manager</title>
+</head>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+
+<img src="http:localhost:3000\public\images\neptuneLogo.png" alt="Neptune Logo"/>
+<body>
+<div>
+    <div>
+        <h1>Neptune Peripheral Manager</h1>
+        <div>
+            <div style="margin-bottom: 20px;">
+                <button id="get_ports" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Get Ports</button>
+
+                Serial Ports:
+                <select id="selectNumber">
+                    <option></option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <button id="open_port" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Open Serial Connection</button>
+            <button id="close_port" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Close Serial Connection</button>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <button id="send_message" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button>
+            Input: <input type="text" name="message" id="message" style="margin-right:40px;">
+        </div>
+        <div>
+            Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none" ></textarea>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var socket = io();
+    $('#get_ports').click(function(){
+        socket.emit('get ports');
+        return false;
+    });
+
+    $('#send_message').click(function(){
+        var arr = [$("#selectNumber").val(), $("#message").val()];
+        socket.emit('send message', arr );
+        return false;
+    });
+
+    $('#open_port').click(function(){
+        socket.emit('open port', $("#selectNumber").val());
+        return false;
+    });
+
+    $('#close_port').click(function(){
+        socket.emit('close port', $("#selectNumber").val());
+        return false;
+    });
+
+    socket.on('port numbers', function(ports) {
+        var len = ports.length;
+        var options = [];
+        for (var i = 0; i < len; i++) {
+            options.push('<option value="',
+                ports[i].comName, '">',
+                ports[i].comName, '</option>');
+        }
+        $("#selectNumber").html(options.join(''));
+    });
+
+    socket.on('data', function(data) {
+        $("#output").append('\n');
+        $("#output").append(data);
+        console.log(data);
+    });
+
+    socket.on('closed', function (data) {
+        console.log(data);
+    });
+
+    socket.on('error message', function (data) {
+        console.log(data);
+    })
+</script>
+</html>

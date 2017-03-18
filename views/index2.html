@@ -1,0 +1,151 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Peripheral Manager</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+</head>
+
+
+<body>
+<div>
+    <div>
+        <h1 id="heading">Neptune Peripheral Manager</h1>
+        <div>
+            <div style="margin-bottom: 20px;">
+                <button id="get_ports" class="btn btn-primary">Refresh Page</button>
+                New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
+            </div>
+            <div>
+                <table id='main_table' class="table table-bordered">
+                    <tr>
+                        <th>Com Port</th>
+                        <th>Connected</th>
+                        <th>Module</th>
+                        <th>Control</th>
+                        <th>Send Message</th>
+                        <th>Name</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="margin-bottom: 20px">
+            <button id="establish_connection" class="btn btn-primary">Establish Connection</button>
+            Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source">
+            Peripheral Connection Destination: <input type="text" name="connection_destination" id="connection_destination">
+        </div>
+        <div style="margin-bottom: 20px;">
+            Input: <input type="text" name="message" id="message" style="margin-right:40px;">
+        </div>
+        <div>
+            Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none" ></textarea>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var socket = io();
+    $('#get_ports').click(function(){
+        socket.emit('get ports');
+        return false;
+    });
+
+    $('#establish_connection').click(function () {
+        var arr = {
+            source: $('#connection_source').val(),
+            destination: $('#connection_destination').val()
+        };
+        socket.emit('establish connection', arr);
+    });
+
+    function tableConnectButtonClick(comName, action) {
+        socket.emit(action, comName);
+    }
+
+    function tableUpdateName(comName) {
+        socket.emit('update name', [comName.substr(0,4), $("#new_name").val()]);
+        console.log(comName.substr(0,4), $("#new_name").val());
+    }
+
+    function send(comName) {
+        var arr = [comName.substr(0,4), $("#message").val()];
+        console.log(comName.substr(0,4), $("#message").val());
+        socket.emit('send message', arr );
+        return false;
+    }
+    socket.on('port numbers', function(ports) {
+        console.log(ports);
+        var len = ports.length;
+        var options = [];
+        $("#main_table").html(
+            "<table id='main_table' class='table table-bordered'>" +
+            '<tr>' +
+            '<th>Com Port</th>'+
+            '<th>Connected</th>'+
+            '<th>Module</th>'+
+            '<th>Control</th>'+
+            '<th>Send Message</th>'+
+            '<th>Name</th>'+
+            '</tr>' +
+            '</table>'
+        );
+        for (var i = 0; i < len; i++) {
+            options.push('<option value="',
+                ports[i].comName, '">',
+                ports[i].comName, '</option>');
+            var html = '<tr>' +
+                '<td>'
+                + ports[i].comName +
+                '</td>' +
+                '<td id="' + ports[i].comName + '">'
+                + '<button id="' + ports[i].comName + '"'
+                + ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                ' value="' + ports[i].connected +'">' +
+                ports[i].connected +
+                '</button>'+
+                '</td>' +
+                '<td>' +
+                ports[i].module +
+                '</td>' +
+                '<td>' +
+                'Control Page' +
+                '</td>' +
+                '<td>' +
+                '<button id="' +ports[i].comName + 'send" ' +'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                '</td>'+
+                '<td>' +
+                '<button id="' + ports[i].comName +'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>'
+                +
+                '</td>' +
+                '</tr>';
+            $("#main_table").append(html);
+        }
+        $("#selectNumber").html(options.join(''));
+
+    });
+
+    socket.on('data', function(data) {
+        $("#output").append('\n');
+        $("#output").append(data);
+        console.log(data);
+    });
+
+    socket.on('closed', function (data) {
+        console.log(data);
+    });
+
+    socket.on('error message', function (data) {
+        console.log(data);
+    })
+</script>
+</html>
