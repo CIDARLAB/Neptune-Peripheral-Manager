@@ -12,7 +12,8 @@ var serial_connections_details = {};
 var custom_connections = {};
 io.on('connection', function(socket){
 
-    socket.on('get ports', function () {
+    socket.on('get ports', function
+        () {
         console.log("Ports requested");
         serialPort.list(function (err, ports) {
             var o = [];
