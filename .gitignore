@@ -16,3 +16,5 @@ pids
 **/.idea/workspace.xml
 **/idea/tasks.xml
 *.iws
+
+/Peripheral Manager/.idea/*
