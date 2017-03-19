@@ -18,7 +18,7 @@
 
 
 <body>
-<div>
+<div style= "margin-left:20px;">
     <div>
         <h1 id="heading">Neptune Peripheral Manager</h1>
         <div>
@@ -49,6 +49,43 @@
         </div>
         <div>
             Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none" ></textarea>
+        </div>
+
+        <!-- Hardware Modules Basic Status, button for Modal with more details-->
+        <div>
+
+          <h4> Module Status </h4>
+          <!-- PCR Modal -->
+
+          <div>
+              <button id="open_pcr" class="btn btn-primary">Open PCR Modal</button>
+          </div>
+
+          <div class="modal fade" id="pcrModal" role="dialog">
+              <div class="modal-dialog modal-lg">
+
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h2 class="modal-title">PCR Module</h2>
+                      </div>
+                      <div class="modal-body">
+                          <div style="margin-bottom: 20px;">
+                              <button id="send_message" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;">
+                          </div>
+                          <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
+                          <div>
+                              <p>Output:</p> <textarea rows="5" cols="75" name="output" id="output" style="overflow-y: scroll; resize: none" readonly></textarea>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button id = "close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- End PCR Modal -->
         </div>
     </div>
 </div>
@@ -147,5 +184,11 @@
     socket.on('error message', function (data) {
         console.log(data);
     })
+
+    //PCR functions
+    $('#open_pcr').click(function() {
+        $('#pcrModal').modal().show();
+    });
+
 </script>
 </html>
