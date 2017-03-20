@@ -54,17 +54,27 @@ io.on('connection', function(socket){
                         socket.emit('error message', err.message);
                         return console.log('Error: ', err.message);
                     }
-                    console.log("Port Opened");
-                    console.log(Object.keys(serial_connections).length);
+                    serial_connections[port_name].on('data', function (data) {
+                        console.log(data);
+                        socket.emit('data',
+                            {
+                                'comName': port_name,
+                                'data': data
+                            });
+                    });
+
                     serial_connections[port_name].write('Hello', function (err) {
                         if (err) {
                             socket.emit('error message', err.message);
                             return console.log('Error on Write:', err.message);
                         }
                     });
+                    /*
                     serial_connections[port_name].on('data', function (data) {
+
                         console.log(data);
                         socket.emit('data', data);
+                        /*
                         if(serial_connections_details[port_name].name in custom_connections) {
                             for (var detail in serial_connections_details) {
                                 if(detail.name == custom_connections[serial_connections_details[port_name].name]) {
@@ -81,9 +91,9 @@ io.on('connection', function(socket){
                             console.log(data);
                             socket.emit('data', data);
                         }
-                    });
-                });
 
+                    });*/
+                });
         }
     });
 
