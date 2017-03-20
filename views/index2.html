@@ -136,8 +136,8 @@
 
     socket.on('data', function(data) {
         $("#output").append('\n');
-        $("#output").append(data);
-        console.log(data);
+        $("#output").append(data.data);
+        console.log(data.data);
     });
 
     socket.on('closed', function (data) {
