@@ -66,7 +66,9 @@ io.on('connection', function(socket){
                         socket.emit('data',
                             {
                                 'comName': port_name,
-                                'data': data
+                                'data': data,
+                                'name': serial_connections_details[port_name].name,
+                                'module': serial_connections_details[port_name].module
                             });
                     });
 
