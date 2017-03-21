@@ -13,6 +13,7 @@
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.2",
+    "hbs": "~4.0.1",
     "serialport": "latest",
     "socket.io": "latest"
   },
@@ -29,4 +30,5 @@
     "url": "https://github.com/CIDARLAB/Neptune-Peripheral-Manager/issues"
   },
   "homepage": "https://github.com/CIDARLAB/Neptune-Peripheral-Manager#readme"
+
 }

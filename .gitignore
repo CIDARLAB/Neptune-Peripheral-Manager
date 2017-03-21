@@ -21,3 +21,4 @@ pids
 Peripheral Manager/.idea/Peripheral Manager.iml
 Peripheral Manager/.idea/modules.xml
 Peripheral Manager/.idea/workspace.xml
+/node_modules/
