@@ -10,6 +10,7 @@ app.get('/', function(req, res){
 var serial_connections = {};
 var serial_connections_details = {};
 var custom_connections = {};
+
 io.on('connection', function(socket){
 
     socket.on('get ports', function
@@ -45,7 +46,7 @@ io.on('connection', function(socket){
         if (!(port_name in serial_connections)) {
             serial_connections_details[port_name] = {
                 name: "default",
-                module: "PCR"
+                module: "unknown"
             };
             serial_connections[port_name] = new serialPort(port_name,
                 {baudRate: 115200, parser: serialPort.parsers.readline("\r\n")},
@@ -56,11 +57,16 @@ io.on('connection', function(socket){
                     }
                     serial_connections[port_name].on('data', function (data) {
                         console.log(data);
-                        socket.emit('data',
-                            {
-                                'comName': port_name,
-                                'data': data
-                            });
+                        if (data.substr(0,12) === "Module Type:") {
+                            serial_connections_details[port_name].module = data.substr(13);
+                        }
+                        else {
+                            socket.emit('data',
+                                {
+                                    'comName': port_name,
+                                    'data': data
+                                });
+                        }
                     });
 
                     serial_connections[port_name].write('Hello', function (err) {
