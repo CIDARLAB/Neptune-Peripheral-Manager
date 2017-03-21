@@ -57,16 +57,16 @@ io.on('connection', function(socket){
                     }
                     serial_connections[port_name].on('data', function (data) {
                         console.log(data);
-                        if (data.substr(0,12) === "Module Type:") {
-                            serial_connections_details[port_name].module = data.substr(13);
-                        }
-                        else {
+                     //   if (data.substr(0,12) === "Module Type:") {
+                     //       serial_connections_details[port_name].module = data.substr(13);
+                     //   }
+                     //   else {
                             socket.emit('data',
                                 {
                                     'comName': port_name,
                                     'data': data
                                 });
-                        }
+                      //  }
                     });
 
                     serial_connections[port_name].write('Hello', function (err) {
