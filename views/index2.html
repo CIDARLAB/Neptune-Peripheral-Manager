@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/html">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Peripheral Manager</title>
@@ -13,54 +14,182 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 </head>
 
 
 <body>
-<div>
     <div>
-        <h1 id="heading">Neptune Peripheral Manager</h1>
         <div>
+            <h1 id="heading">Neptune Peripheral Manager</h1>
+            <div>
+                <div style="margin-bottom: 20px;">
+                    <button id="get_ports" class="btn btn-primary">Update Page</button> New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
+                </div>
+                <div>
+                    <table id='main_table' class="table table-bordered">
+                        <tr>
+                            <th>Com Port</th>
+                            <th>Connected</th>
+                            <th>Module</th>
+                            <th>Control</th>
+                            <th>Send Message</th>
+                            <th>Name</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="margin-bottom: 20px">
+                <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
+                    name="connection_destination" id="connection_destination">
+            </div>
             <div style="margin-bottom: 20px;">
-                <button id="get_ports" class="btn btn-primary">Update Page</button>
-                New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
+                Input: <input type="text" name="message" id="message" style="margin-right:40px;">
             </div>
             <div>
-                <table id='main_table' class="table table-bordered">
-                    <tr>
-                        <th>Com Port</th>
-                        <th>Connected</th>
-                        <th>Module</th>
-                        <th>Control</th>
-                        <th>Send Message</th>
-                        <th>Name</th>
-                    </tr>
-                </table>
+                Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none"></textarea>
+            </div>
+
+            <div>
+                <button id="open_pcr" class="btn btn-primary">Open PCR Modal</button>
+            </div>
+
+            <div class="modal fade" id="pcrModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">PCR Module</h2>
+                        </div>
+                        <div class="modal-body">
+                            <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
+                            <div class "row" style="margin-top: 50px;">
+                                <ul class="nav nav-tabs">
+                                    <li><a data-toggle="tab" href="#menu1">Output</a></li>
+                                    <li><a data-toggle="tab" href="#menu2">Control</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="menu1" class="tab-pane fade">
+                                        <div style="margin-top: 25px; margin-left: 20px;">
+                                            <textarea rows="5" cols="100" id="pcr_output" style="overflow-y: scroll; resize: none" readonly></textarea>
+                                        </div>
+                                    </div>
+                                    <div id="menu2" class="tab-pane fade">
+                                        <div style="margin-top: 25px; margin-left: 50px;">
+                                            <div class="row">
+                                                <form class="col m12">
+                                                    <div class="row">
+                                                        <label for="temp" style="font-size: 16px;">Temperatures: </label>
+                                                        <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                        <label for="time" style="font-size: 16px;">Times: </label>
+                                                        <input id="time" type="text" class="validate" style="margin-top: 35px; font-size: 14x;">
+                                                        <label for="repeat" style="font-size: 16px;">Repetitions: </label>
+                                                        <input id="repeat" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                        <input type="checkbox" id="warm">Warmup First
+                                                    <div class="row" style="margin-top: 25px;">
+                                                        <div class="input-field col m12">
+                                                            <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div style="margin-bottom: 20px">
-            <button id="establish_connection" class="btn btn-primary">Establish Connection</button>
-            Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source">
-            Peripheral Connection Destination: <input type="text" name="connection_destination" id="connection_destination">
-        </div>
-        <div style="margin-bottom: 20px;">
-            Input: <input type="text" name="message" id="message" style="margin-right:40px;">
-        </div>
-        <div>
-            Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none" ></textarea>
-        </div>
     </div>
-</div>
 </body>
 <script>
+    //PCR functions
+    google.charts.load('current', {
+        'packages': ['corechart']
+    });
+    google.charts.setOnLoadCallback(drawChart);
+
+    var options = {
+        hAxis: {
+            title: 'Time (s)',
+            titleTextStyle: {
+                color: '#333'
+            }
+        },
+        vAxis: {
+            title: 'Temperature (\xB0C)',
+            minValue: 0
+        },
+        legend: 'right',
+        height: '500',
+        width: '875',
+        title: "Current Thermal Cycle"
+    };
+
+    var time = 1;
+
+    var pcrArray = [
+        ['Year', 'Desired Temp.', 'Actual Temp.'],
+        [0, 23, 23]
+    ]
+
+
+    function drawChart() {
+        var visArray = pcrArray;
+        if (pcrArray.length > 201) {
+            visArray = []
+            visArray = pcrArray.slice(pcrArray.length - 201, pcrArray.length - 1);
+            visArray.unshift(['Year', 'Desired Temperature', 'Actual Temperature']);
+        }
+        var data = google.visualization.arrayToDataTable(visArray);
+        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+
+    function printStuff(data) {
+        var dataArray = data.split('\t');
+        var totalArray = [time];
+        count = 0;
+        for (word in dataArray) {
+            var val = parseFloat(dataArray[word]);
+            if (!(isNaN(val)) && count < 2) {
+                totalArray.push(val);
+                count += 1;
+            }
+        }
+        if (totalArray.length > 1) {
+            pcrArray.push(totalArray);
+            time += 1;
+        }
+        drawChart();
+    }
+
+    function clearPCR() {
+        document.getElementById("pcr_output").value = "";
+        pcrArray = [
+            ['Year', 'Desired Temperature', 'Actual Temperature'],
+            [0, 23, 23]
+        ];
+        time = 1;
+        drawChart();
+    }
+
+    //end PCR functions
+
     var socket = io();
-    $('#get_ports').click(function(){
+    $('#get_ports').click(function() {
         socket.emit('get ports');
         return false;
     });
 
-    $('#establish_connection').click(function () {
+    $('#establish_connection').click(function() {
         var arr = {
             source: $('#connection_source').val(),
             destination: $('#connection_destination').val()
@@ -73,14 +202,14 @@
     }
 
     function tableUpdateName(comName) {
-        socket.emit('update name', [comName.substr(0,4), $("#new_name").val()]);
-        console.log(comName.substr(0,4), $("#new_name").val());
+        socket.emit('update name', [comName.substr(0, 4), $("#new_name").val()]);
+        console.log(comName.substr(0, 4), $("#new_name").val());
     }
 
     function send(comName) {
-        var arr = [comName.substr(0,4), $("#message").val()];
-        console.log(comName.substr(0,4), $("#message").val());
-        socket.emit('send message', arr );
+        var arr = [comName.substr(0, 4), $("#message").val()];
+        console.log(comName.substr(0, 4), $("#message").val());
+        socket.emit('send message', arr);
         return false;
     }
     socket.on('port numbers', function(ports) {
@@ -90,12 +219,12 @@
         $("#main_table").html(
             "<table id='main_table' class='table table-bordered'>" +
             '<tr>' +
-            '<th>Com Port</th>'+
-            '<th>Connected</th>'+
-            '<th>Module</th>'+
-            '<th>Control</th>'+
-            '<th>Send Message</th>'+
-            '<th>Name</th>'+
+            '<th>Com Port</th>' +
+            '<th>Connected</th>' +
+            '<th>Module</th>' +
+            '<th>Control</th>' +
+            '<th>Send Message</th>' +
+            '<th>Name</th>' +
             '</tr>' +
             '</table>'
         );
@@ -104,15 +233,15 @@
                 ports[i].comName, '">',
                 ports[i].comName, '</option>');
             var html = '<tr>' +
-                '<td>'
-                + ports[i].comName +
+                '<td>' +
+                ports[i].comName +
                 '</td>' +
-                '<td id="' + ports[i].comName + '">'
-                + '<button id="' + ports[i].comName + '"'
-                + ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
-                ' value="' + ports[i].connected +'">' +
+                '<td id="' + ports[i].comName + '">' +
+                '<button id="' + ports[i].comName + '"' +
+                ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                ' value="' + ports[i].connected + '">' +
                 ports[i].connected +
-                '</button>'+
+                '</button>' +
                 '</td>' +
                 '<td>' +
                 ports[i].module +
@@ -121,11 +250,10 @@
                 'Control Page' +
                 '</td>' +
                 '<td>' +
-                '<button id="' +ports[i].comName + 'send" ' +'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
-                '</td>'+
+                '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                '</td>' +
                 '<td>' +
-                '<button id="' + ports[i].comName +'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>'
-                +
+                '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
                 '</td>' +
                 '</tr>';
             $("#main_table").append(html);
@@ -135,17 +263,52 @@
     });
 
     socket.on('data', function(data) {
-        $("#output").append('\n');
-        $("#output").append(data.data);
+        $("#pcr_output").append('\n');
+        $("#pcr_output").append(data.data);
         console.log(data.data);
+        //if data is from a module of type: PCR
+        var allText = document.getElementById("pcr_output").value;
+        allText += data;
+        allText += '\n';
+        document.getElementById("pcr_output").value = allText;
+        printStuff(data);
     });
 
-    socket.on('closed', function (data) {
+    socket.on('closed', function(data) {
         console.log(data);
     });
 
-    socket.on('error message', function (data) {
+    socket.on('error message', function(data) {
         console.log(data);
     })
+
+    //PCR modal
+    $('#open_pcr').click(function() {
+        $('#pcrModal').modal().show();
+    });
+
+    $('#submitPCR').click(function(){
+      finalCommand = "";
+      tempCommand = "H";
+      timeCommand = "T";
+      repeatAmount = parseFloat(document.getElementById("repeat").value);
+
+      for (var i = 0; i < repeatAmount; i++){
+        tempCommand += " "+document.getElementById("temp").value;
+        timeCommand += " "+document.getElementById("time").value;
+      }
+      tempCommand+=" S ";
+      timeCommand+=" S ";
+
+      if(document.getElementById('warm').checked){
+        finalCommand+="W "+ timeCommand + tempCommand;
+      }
+      else{
+        finalCommand+= timeCommand + tempCommand;
+      }
+      console.log(finalCommand);
+
+    });
 </script>
+
 </html>
