@@ -372,6 +372,9 @@
             allData+= data.data + '\n';
             document.getElementById('charOutput').value = allData;
 
+            // Auto scroll to bottom
+            document.getElementById('charOutput').scrollTop = document.getElementById('charOutput').scrollHeight;
+
             if (splitData[2] == 'red') {
                 $("#dropletShow").html(
                     '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
@@ -393,6 +396,9 @@
             allText += '\n';
             document.getElementById("pcr_output").value = allText;
 
+            // Auto scroll to bottom
+            document.getElementById('pcr_output').scrollTop = document.getElementById('pcr_output').scrollHeight;
+
             printStuff(data.data);
         }
     });
@@ -405,11 +411,6 @@
     socket.on('error message', function(data) {
         console.log(data);
     })
-
-    //PCR functions
-  /*  $('#open_pcr').click(function() {
-        $('#pcrModal').modal().show();
-    }); */
 
     // Open Characterization Modal
 
