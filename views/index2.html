@@ -18,10 +18,7 @@
 
 </head>
 
-
 <body>
-<div style= "margin-left:20px;">
-
     <div>
         <div>
             <h1 id="heading">Neptune Peripheral Manager</h1>
@@ -46,76 +43,88 @@
                 <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
                     name="connection_destination" id="connection_destination">
             </div>
-        </div>
 
-        <!-- Hardware Modules Basic Status, button for Modal with more details-->
-        <div>
-
-          <h4> Module Status </h4>
-          <!-- PCR Modal -->
-
-          <div>
-              <button id="open_pcr" class="btn btn-primary">Open PCR Modal</button>
-          </div>
-
-          <div class="modal fade" id="pcrModal" role="dialog">
-              <div class="modal-dialog modal-lg">
-
-                  <!-- Modal content-->
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h2 class="modal-title">PCR Module</h2>
-                      </div>
-                      <div class="modal-body">
-                          <div style="margin-bottom: 20px;">
-                              <button id="send_message" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;">
-                          </div>
-                          <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
-                          <div>
-                              <p>Output:</p> <textarea rows="5" cols="75" name="output" id="output" style="overflow-y: scroll; resize: none" readonly></textarea>
-                          </div>
-                      </div>
-                      <div class="modal-footer">
-                          <button id = "close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-
-          <!-- End PCR Modal -->
-            <!-- Characterization Modal -->
-            <div style="margin-top: 20px;">
-                <button id="open_characterization" class="btn btn-primary">Open Characterization Modal</button>
-            </div>
-
-            <div class="modal fade" id="characterizationModal" role="dialog">
+            <div class="modal fade" id="pcrModal" role="dialog">
                 <div class="modal-dialog modal-lg">
-
                     <!-- Modal content-->
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2 class="modal-title">Characterization Module</h2>
+                            <h2 class="modal-title">PCR Module</h2>
                         </div>
                         <div class="modal-body">
-                            <div style="margin-bottom: 20px;">
-                                <!-- <button id="sendMessage" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;"> -->
-                                <p>Droplet Representation:</p>
-                                <div id="charModal" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: gray;"></div>
-                            </div>
-                            <div id="chartdiv" style="align-content: center; display: flex; justify-content: center;"></div>
-                            <div>
-                                <p>Raw Output:</p> <textarea rows="5" cols="75" name="output" id="out" style="overflow-y: scroll; resize: none" readonly></textarea>
+                            <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
+                            <div class "row" style="margin-top: 50px;">
+                                <ul class="nav nav-tabs">
+                                    <li><a data-toggle="tab" href="#menu1">Output</a></li>
+                                    <li><a data-toggle="tab" href="#menu2">Control</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="menu1" class="tab-pane fade">
+                                        <div style="margin-top: 25px; margin-left: 20px;">
+                                            <textarea rows="5" cols="100" id="pcr_output" style="overflow-y: scroll; resize: none" readonly></textarea>
+                                        </div>
+                                    </div>
+                                    <div id="menu2" class="tab-pane fade">
+                                        <div style="margin-top: 25px; margin-left: 50px;">
+                                            <div class="row">
+                                                <form class="col m12">
+                                                  <div class = "row">
+                                                    <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
+                                                    <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                  </div>
+                                                    <div class="row">
+                                                        <label for="temp" style="font-size: 16px;">Temperatures: </label>
+                                                        <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                        <label for="time" style="font-size: 16px;">Times: </label>
+                                                        <input id="time" type="text" class="validate" style="margin-top: 35px; font-size: 14x;">
+                                                        <label for="repeat" style="font-size: 16px;">Repetitions: </label>
+                                                        <input id="repeat" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                        <input type="checkbox" id="warm">Warmup First
+                                                    <div class="row" style="margin-top: 25px;">
+                                                        <div class="input-field col m12">
+                                                            <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-top: 25px;">
+                                                        <div class="input-field col m12">
+                                                            <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button id = "closeCharacterization" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="charModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title">Characterization Module</h2>
+                            </div>
+                            <div class="modal-body">
+                                <div style="margin-bottom: 20px;">
+                                    <button id="sendMessage" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;">
+                                    <p>Droplet Representation:</p>
+                                    <div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: gray;"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="closeCharacterization" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- End Characterization Module -->
-
         </div>
     </div>
 </body>
@@ -149,7 +158,7 @@
     var pcrArray = [
         ['Year', 'Desired Temp.', 'Actual Temp.'],
         [0, 23, 23]
-    ]
+    ];
 
 
     function drawChart() {
@@ -243,30 +252,83 @@
             options.push('<option value="',
                 ports[i].comName, '">',
                 ports[i].comName, '</option>');
-            var html = '<tr>' +
-                '<td>' +
-                ports[i].comName +
-                '</td>' +
-                '<td id="' + ports[i].comName + '">' +
-                '<button id="' + ports[i].comName + '"' +
-                ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
-                ' value="' + ports[i].connected + '">' +
-                ports[i].connected +
-                '</button>' +
-                '</td>' +
-                '<td>' +
-                ports[i].module +
-                '</td>' +
-                '<td>' +
-                '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>' +
-                '</td>' +
-                '<td>' +
-                '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
-                '</td>' +
-                '<td>' +
-                '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
-                '</td>' +
-                '</tr>';
+
+            if (ports[i].module == 'PCR') {
+                var html = '<tr>' +
+                    '<td>' +
+                    ports[i].comName +
+                    '</td>' +
+                    '<td id="' + ports[i].comName + '">' +
+                    '<button id="' + ports[i].comName + '"' +
+                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                    ' value="' + ports[i].connected + '">' +
+                    ports[i].connected +
+                    '</button>' +
+                    '</td>' +
+                    '<td>' +
+                    ports[i].module +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                    '</td>' +
+                    '</tr>';
+            } else if (ports[i].module == 'Characterization') {
+                var html = '<tr>' +
+                    '<td>' +
+                    ports[i].comName +
+                    '</td>' +
+                    '<td id="' + ports[i].comName + '">' +
+                    '<button id="' + ports[i].comName + '"' +
+                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                    ' value="' + ports[i].connected + '">' +
+                    ports[i].connected +
+                    '</button>' +
+                    '</td>' +
+                    '<td>' +
+                    ports[i].module +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                    '</td>' +
+                    '</tr>';
+            } else {
+                var html = '<tr>' +
+                    '<td>' +
+                    ports[i].comName +
+                    '</td>' +
+                    '<td id="' + ports[i].comName + '">' +
+                    '<button id="' + ports[i].comName + '"' +
+                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                    ' value="' + ports[i].connected + '">' +
+                    ports[i].connected +
+                    '</button>' +
+                    '</td>' +
+                    '<td>' +
+                    ports[i].module +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary">Control</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                    '</td>' +
+                    '<td>' +
+                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                    '</td>' +
+                    '</tr>';
+            }
             $("#main_table").append(html);
         }
         $("#selectNumber").html(options.join(''));
@@ -279,30 +341,32 @@
         console.log(data);
 
         if (data.module == 'Characterization') {
-            console.log('Detected Characterization module!')
+            console.log('Detected Characterization module!');
             var splitData = data.data.split(" ");
 
             if (splitData[2] == 'red') {
-                $("#charModal").html(
-                    '<div id="charModal" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
+                $("#dropletSHow").html(
+                    '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
                 );
 
             } else if (splitData[2] == 'blue') {
-                $("#charModal").html(
-                    '<div id="charModal" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: blue;"></div>'
+                $("#dropletShow").html(
+                    '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: blue;"></div>'
                 );
             }
-        }
+        } else if (data.module == 'PCR') {
+            $("#pcr_output").append('\n');
 
- /*       $("#pcr_output").append('\n');
-        $("#pcr_output").append(data.data);
-        console.log(data.data);
-        //if data is from a module of type: PCR
-        var allText = document.getElementById("pcr_output").value;
-        allText += data.data;
-        allText += '\n';
-        document.getElementById("pcr_output").value = allText;
-        printStuff(data.data); */
+            $("#pcr_output").append(data.data);
+            console.log(data.data);
+            //if data is from a module of type: PCR
+            var allText = document.getElementById("pcr_output").value;
+            allText += data.data;
+            allText += '\n';
+            document.getElementById("pcr_output").value = allText;
+
+            printStuff(data.data);
+        }
     });
 
     socket.on('closed', function(data) {
@@ -313,16 +377,22 @@
     socket.on('error message', function(data) {
         console.log(data);
     })
+
     //PCR functions
   /*  $('#open_pcr').click(function() {
         $('#pcrModal').modal().show();
     }); */
 
     // Open Characterization Modal
-    $('#open_characterization').click(function() {
-        $('#characterizationModal').modal().show();
-    });
 
+    function openCharacterization() {
+        $('#charModal').modal().show();
+        console.log("TRYING TO OPEN");
+    }
+
+   /* $('#open_characterization').click(function() {
+        $('#characterizationModal').modal().show();
+    }); */
 
     //PCR modal
     function openPCR(newName) {
