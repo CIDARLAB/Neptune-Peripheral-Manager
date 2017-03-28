@@ -114,11 +114,22 @@
                     <h2 class="modal-title">Characterization Module</h2>
                 </div>
                 <div class="modal-body">
+
                     <div style="margin-bottom: 20px;">
                         <!-- <button id="sendMessage" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;"> -->
                         <p>Droplet Representation:</p>
                         <div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: gray;"></div>
                     </div>
+
+                    <p id="charComName" style="margin-top: 35px; font-size: 14px;"></p>
+
+                    <div class="row" style="margin-top: 25px; margin-left: 2px;">
+                        <p style="margin-top: 5px;">
+                            <input type="text" name="charMessage" id="charMessage" style="margin-right:5px;">
+                            <button type="button" id="sendCharMessage" class="btn btn-outline-success">Submit Message</button>
+                        </p>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button id="closeCharacterization" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -232,6 +243,14 @@
         socket.emit('send message', arr);
         return false;
     }
+
+    function sendWithMsg(comName, message) {
+        var arr = [comName.substr(0, 4), message];
+        console.log(comName.substr(0, 4), message);
+        socket.emit('send message', arr);
+        return false;
+    }
+
     socket.on('port numbers', function(ports) {
         console.log(ports);
         var len = ports.length;
@@ -294,7 +313,7 @@
                     ports[i].module +
                     '</td>' +
                     '<td>' +
-                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
+                    '<button id="' + ports[i].comName + 'openChar"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
                     '</td>' +
                     '<td>' +
                     '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
@@ -345,7 +364,7 @@
             var splitData = data.data.split(" ");
 
             if (splitData[2] == 'red') {
-                $("#dropletSHow").html(
+                $("#dropletShow").html(
                     '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
                 );
 
@@ -385,9 +404,9 @@
 
     // Open Characterization Modal
 
-    function openCharacterization() {
+    function openCharacterization(comName) {
+        document.getElementById("charComName").value = comName.substr(0,4);
         $('#charModal').modal().show();
-        console.log("TRYING TO OPEN");
     }
 
    /* $('#open_characterization').click(function() {
@@ -432,5 +451,12 @@
       socket.emit('send message', arr);
 
     });
+
+    $('#sendCharMessage').click(function(){
+        var enteredMessage = document.getElementById("charMessage").value;
+        sendWithMsg( document.getElementById("charComName").value , enteredMessage);
+        console.log(enteredMessage);
+    })
+
 </script>
 </html>
