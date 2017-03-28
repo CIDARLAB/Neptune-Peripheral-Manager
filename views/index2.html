@@ -44,15 +44,8 @@
                 <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
                     name="connection_destination" id="connection_destination">
             </div>
-            <div style="margin-bottom: 20px;">
-                Input: <input type="text" name="message" id="message" style="margin-right:40px;">
-            </div>
-            <div>
-                Output: <textarea rows="10" cols="100" name="output" id="output" style="overflow-y: scroll; resize: none"></textarea>
-            </div>
 
             <div>
-                <button id="open_pcr" class="btn btn-primary">Open PCR Modal</button>
             </div>
 
             <div class="modal fade" id="pcrModal" role="dialog">
@@ -80,6 +73,10 @@
                                         <div style="margin-top: 25px; margin-left: 50px;">
                                             <div class="row">
                                                 <form class="col m12">
+                                                  <div class = "row">
+                                                    <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
+                                                    <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                  </div>
                                                     <div class="row">
                                                         <label for="temp" style="font-size: 16px;">Temperatures: </label>
                                                         <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
@@ -91,6 +88,11 @@
                                                     <div class="row" style="margin-top: 25px;">
                                                         <div class="input-field col m12">
                                                             <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-top: 25px;">
+                                                        <div class="input-field col m12">
+                                                            <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -247,7 +249,7 @@
                 ports[i].module +
                 '</td>' +
                 '<td>' +
-                'Control Page' +
+                '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>' +
                 '</td>' +
                 '<td>' +
                 '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
@@ -268,14 +270,15 @@
         console.log(data.data);
         //if data is from a module of type: PCR
         var allText = document.getElementById("pcr_output").value;
-        allText += data;
+        allText += data.data;
         allText += '\n';
         document.getElementById("pcr_output").value = allText;
-        printStuff(data);
+        printStuff(data.data);
     });
 
     socket.on('closed', function(data) {
         console.log(data);
+        clearPCR();
     });
 
     socket.on('error message', function(data) {
@@ -283,8 +286,15 @@
     })
 
     //PCR modal
-    $('#open_pcr').click(function() {
-        $('#pcrModal').modal().show();
+    function openPCR(newName) {
+      document.getElementById("pcrComName").value = newName.substr(0, 4);
+      $('#pcrModal').modal().show();
+    }
+
+    $('#quitPCR').click(function(){
+      var arr = [document.getElementById("pcrComName").value, " Q "];
+      console.log(document.getElementById("pcrComName").value, " Q ");
+      socket.emit('send message', arr);
     });
 
     $('#submitPCR').click(function(){
@@ -307,6 +317,10 @@
         finalCommand+= timeCommand + tempCommand;
       }
       console.log(finalCommand);
+
+      var arr = [document.getElementById("pcrComName").value, finalCommand];
+      console.log(document.getElementById("pcrComName").value, finalCommand);
+      socket.emit('send message', arr);
 
     });
 </script>
