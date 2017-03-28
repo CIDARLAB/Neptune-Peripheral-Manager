@@ -128,6 +128,10 @@
                             <input type="text" name="charMessage" id="charMessage" style="margin-right:5px;">
                             <button type="button" id="sendCharMessage" class="btn btn-outline-success">Submit Message</button>
                         </p>
+
+                        <div style="margin-top: 25px;">
+                            <textarea rows="5" cols="100" id="charOutput" style="overflow-y: scroll; resize: none" readonly></textarea>
+                        </div>
                     </div>
 
                 </div>
@@ -357,11 +361,16 @@
     socket.on('data', function(data) {
         $("#output").append('\n');
         $("#output").append(data.data);
-        console.log(data);
+        console.log(data, data.module);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
             var splitData = data.data.split(" ");
+
+            // Grab data from the window and append
+            var allData = document.getElementById('charOutput').value;
+            allData+= data.data + '\n';
+            document.getElementById('charOutput').value = allData;
 
             if (splitData[2] == 'red') {
                 $("#dropletShow").html(
