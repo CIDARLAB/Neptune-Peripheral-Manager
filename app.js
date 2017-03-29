@@ -30,7 +30,9 @@ io.on('connection', function(socket){
                 else {
                     o.push({
                         comName: ports[connection].comName,
-                        connected: 'Connect'
+                        connected: 'Connect',
+                        name: 'not defined',
+                        module: 'not defined'
                     });
                 }
             }
