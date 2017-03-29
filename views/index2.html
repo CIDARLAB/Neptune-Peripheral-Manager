@@ -179,7 +179,7 @@
     function drawChart() {
         var visArray = pcrArray;
         if (pcrArray.length > 201) {
-            visArray = []
+            visArray = [];
             visArray = pcrArray.slice(pcrArray.length - 201, pcrArray.length - 1);
             visArray.unshift(['Year', 'Desired Temperature', 'Actual Temperature']);
         }

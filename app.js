@@ -30,7 +30,9 @@ io.on('connection', function(socket){
                 else {
                     o.push({
                         comName: ports[connection].comName,
-                        connected: 'Connect'
+                        connected: 'Connect',
+                        name: 'not defined',
+                        module: 'not defined'
                     });
                 }
             }
@@ -57,10 +59,25 @@ io.on('connection', function(socket){
                     }
                     serial_connections[port_name].on('data', function (data) {
                         console.log(data);
-                        if (data.substr(0,12) === "Module Type:") {
-                            serial_connections_details[port_name].module = data.substr(13);
+
+                        if(data.length >=12) {
+                            if (data.substr(0, 12) === "Module Type:") {
+                                serial_connections_details[port_name].module = data.substr(13);
+                                return;
+                            }
                         }
-                        else {
+
+                        if(serial_connections_details[port_name].name in custom_connections) {
+                            console.log("There exists a Connection");
+                            console.log(custom_connections[serial_connections_details[port_name].name]);
+
+                            for(var connection in serial_connections_details) {
+                                console.log(connection);
+                                if(serial_connections_details[connection].name === custom_connections[serial_connections_details[port_name].name]) {
+                                    serial_connections[connection].write(data);
+                                }
+                            }
+                        } else {
                             socket.emit('data',
                                 {
                                     'comName': port_name,
@@ -77,30 +94,6 @@ io.on('connection', function(socket){
                             return console.log('Error on Write:', err.message);
                         }
                     });
-                    /*
-                    serial_connections[port_name].on('data', function (data) {
-
-                        console.log(data);
-                        socket.emit('data', data);
-                        /*
-                        if(serial_connections_details[port_name].name in custom_connections) {
-                            for (var detail in serial_connections_details) {
-                                if(detail.name == custom_connections[serial_connections_details[port_name].name]) {
-                                    serial_connections[detail].write(data, function (err) {
-                                        if (err) {
-                                            socket.emit('error message', err.message);
-                                            return console.log('Error on Write:', err.message);
-                                        }
-                                    });
-                                    break;
-                                }
-                            }
-                        } else {
-                            console.log(data);
-                            socket.emit('data', data);
-                        }
-
-                    });*/
                 });
         }
     });
