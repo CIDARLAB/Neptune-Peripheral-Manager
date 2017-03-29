@@ -21,6 +21,10 @@
 <body>
 
     <h1 id="heading">Neptune Peripheral Manager</h1>
+
+
+    <!---------------------------------          Main Table        --------------------------------->
+
     <div>
         <div style="margin-bottom: 20px;">
             <button id="get_ports" class="btn btn-primary">Update Page</button> New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
@@ -38,12 +42,16 @@
             </table>
         </div>
     </div>
-
     <div style="margin-bottom: 20px">
         <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
             name="connection_destination" id="connection_destination">
     </div>
+    <div>
+        Input: <input type="text" name="message" id="message" style="margin-right:40px;">
+    </div>
 
+
+    <!----------------------------------------- PCR Modal -------------------------------------------------->
     <div class="modal fade" id="pcrModal" role="dialog">
         <div class="modal-dialog modal-lg">
             <!-- Modal content-->
@@ -107,6 +115,8 @@
         </div>
     </div>
 
+
+    <!----------------------------------- Characterization Modal --------------------------------------->
     <div class="modal" id="charModal" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -243,7 +253,6 @@
 
     function send(comName) {
         var arr = [comName.substr(0, 4), $("#message").val()];
-        console.log(comName.substr(0, 4), $("#message").val());
         socket.emit('send message', arr);
         return false;
     }
@@ -359,9 +368,7 @@
     });
 
     socket.on('data', function(data) {
-        $("#output").append('\n');
-        $("#output").append(data.data);
-        console.log(data, data.module);
+        console.log(data);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
@@ -410,7 +417,7 @@
 
     socket.on('error message', function(data) {
         console.log(data);
-    })
+    });
 
     // Open Characterization Modal
 
