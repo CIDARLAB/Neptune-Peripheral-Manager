@@ -376,18 +376,18 @@
 
             // Grab data from the window and append
             var allData = document.getElementById('charOutput').value;
-            allData+= data.data + '\n';
+            allData+= data.data;
             document.getElementById('charOutput').value = allData;
 
             // Auto scroll to bottom
             document.getElementById('charOutput').scrollTop = document.getElementById('charOutput').scrollHeight;
 
-            if (splitData[2] == 'red') {
+            if (splitData[1] == 'red') {
                 $("#dropletShow").html(
                     '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
                 );
 
-            } else if (splitData[2] == 'blue') {
+            } else if (splitData[1] == 'blue') {
                 $("#dropletShow").html(
                     '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: blue;"></div>'
                 );

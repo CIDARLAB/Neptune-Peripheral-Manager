@@ -67,25 +67,29 @@ io.on('connection', function(socket){
                             }
                         }
 
-                        if (serial_connections_details[port_name].name in custom_connections) {
-                            console.log("There exists a Connection");
-                            console.log(custom_connections[serial_connections_details[port_name].name]);
 
+                        if (serial_connections_details[port_name].name in custom_connections) {
                             for (var connection in serial_connections_details) {
-                                console.log(connection);
                                 if (serial_connections_details[connection].name === custom_connections[serial_connections_details[port_name].name]) {
+                                    socket.emit('data',
+                                        {
+                                            'comName': port_name,
+                                            'data': data,
+                                            'name': serial_connections_details[port_name].name,
+                                            'module': serial_connections_details[port_name].module
+                                        });
                                     serial_connections[connection].write(data);
                                 }
                             }
+                        } else {
+                            socket.emit('data',
+                                {
+                                    'comName': port_name,
+                                    'data': data,
+                                    'name': serial_connections_details[port_name].name,
+                                    'module': serial_connections_details[port_name].module
+                                });
                         }
-                        socket.emit('data',
-                            {
-                                'comName': port_name,
-                                'data': data,
-                                'name': serial_connections_details[port_name].name,
-                                'module': serial_connections_details[port_name].module
-                            });
-
                     });
 
                     serial_connections[port_name].write('Hello', function (err) {
