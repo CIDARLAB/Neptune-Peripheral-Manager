@@ -19,114 +19,128 @@
 </head>
 
 <body>
+
+    <h1 id="heading">Neptune Peripheral Manager</h1>
     <div>
+        <div style="margin-bottom: 20px;">
+            <button id="get_ports" class="btn btn-primary">Update Page</button> New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
+        </div>
         <div>
-            <h1 id="heading">Neptune Peripheral Manager</h1>
-            <div>
-                <div style="margin-bottom: 20px;">
-                    <button id="get_ports" class="btn btn-primary">Update Page</button> New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
-                </div>
-                <div>
-                    <table id='main_table' class="table table-bordered">
-                        <tr>
-                            <th>Com Port</th>
-                            <th>Connected</th>
-                            <th>Module</th>
-                            <th>Control</th>
-                            <th>Send Message</th>
-                            <th>Name</th>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div style="margin-bottom: 20px">
-                <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
-                    name="connection_destination" id="connection_destination">
-            </div>
+            <table id='main_table' class="table table-bordered">
+                <tr>
+                    <th>Com Port</th>
+                    <th>Connected</th>
+                    <th>Module</th>
+                    <th>Control</th>
+                    <th>Send Message</th>
+                    <th>Name</th>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-            <div class="modal fade" id="pcrModal" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 class="modal-title">PCR Module</h2>
-                        </div>
-                        <div class="modal-body">
-                            <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
-                            <div class "row" style="margin-top: 50px;">
-                                <ul class="nav nav-tabs">
-                                    <li><a data-toggle="tab" href="#menu1">Output</a></li>
-                                    <li><a data-toggle="tab" href="#menu2">Control</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div id="menu1" class="tab-pane fade">
-                                        <div style="margin-top: 25px; margin-left: 20px;">
-                                            <textarea rows="5" cols="100" id="pcr_output" style="overflow-y: scroll; resize: none" readonly></textarea>
-                                        </div>
-                                    </div>
-                                    <div id="menu2" class="tab-pane fade">
-                                        <div style="margin-top: 25px; margin-left: 50px;">
-                                            <div class="row">
-                                                <form class="col m12">
-                                                  <div class = "row">
-                                                    <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
-                                                    <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
-                                                  </div>
-                                                    <div class="row">
-                                                        <label for="temp" style="font-size: 16px;">Temperatures: </label>
-                                                        <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
-                                                        <label for="time" style="font-size: 16px;">Times: </label>
-                                                        <input id="time" type="text" class="validate" style="margin-top: 35px; font-size: 14x;">
-                                                        <label for="repeat" style="font-size: 16px;">Repetitions: </label>
-                                                        <input id="repeat" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
-                                                        <input type="checkbox" id="warm">Warmup First
-                                                    <div class="row" style="margin-top: 25px;">
-                                                        <div class="input-field col m12">
-                                                            <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row" style="margin-top: 25px;">
-                                                        <div class="input-field col m12">
-                                                            <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
-                                                        </div>
-                                                    </div>
-                                                </form>
+    <div style="margin-bottom: 20px">
+        <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
+            name="connection_destination" id="connection_destination">
+    </div>
+
+    <div class="modal fade" id="pcrModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">PCR Module</h2>
+                </div>
+                <div class="modal-body">
+                    <div id="chart_div" style="align-content: center; display: flex; justify-content: center;">
+                    </div>
+                    <div class="row" style="margin-top: 50px;">
+                        <ul class="nav nav-tabs">
+                            <li><a data-toggle="tab" href="#menu1">Output</a></li>
+                            <li><a data-toggle="tab" href="#menu2">Control</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="menu1" class="tab-pane fade">
+                                <div style="margin-top: 25px; margin-left: 20px;">
+                                    <textarea rows="5" cols="100" id="pcr_output" style="overflow-y: scroll; resize: none" readonly></textarea>
+                                </div>
+                            </div>
+                            <div id="menu2" class="tab-pane fade">
+                                <div style="margin-top: 25px; margin-left: 50px;">
+                                    <div class="row">
+                                        <form class="col m12">
+                                            <div class = "row">
+                                                <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
+                                                <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
                                             </div>
-                                        </div>
+                                            <div class="row">
+                                                <label for="temp" style="font-size: 16px;">Temperatures: </label>
+                                                <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                <label for="time" style="font-size: 16px;">Times: </label>
+                                                <input id="time" type="text" class="validate" style="margin-top: 35px; font-size: 14x;">
+                                                <label for="repeat" style="font-size: 16px;">Repetitions: </label>
+                                                <input id="repeat" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                <input type="checkbox" id="warm">Warmup First
+                                            </div>
+                                            <div class="row" style="margin-top: 25px;">
+                                                <div class="input-field col m12">
+                                                    <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 25px;">
+                                                <div class="input-field col m12">
+                                                    <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
                     </div>
                 </div>
-
-                <div class="modal fade" id="charModal" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <!-- Modal content-->
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2 class="modal-title">Characterization Module</h2>
-                            </div>
-                            <div class="modal-body">
-                                <div style="margin-bottom: 20px;">
-                                    <button id="sendMessage" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;">
-                                    <p>Droplet Representation:</p>
-                                    <div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: gray;"></div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button id="closeCharacterization" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <div class="modal" id="charModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Characterization Module</h2>
+                </div>
+                <div class="modal-body">
+
+                    <div style="margin-bottom: 20px;">
+                        <!-- <button id="sendMessage" style="background-color: #000080;border-radius:8px 8px 8px 8px;color: white; margin-right: 40px;">Send message</button> Input: <input type="text" name="message" id="message" style="margin-right:40px;"> -->
+                        <p>Droplet Representation:</p>
+                        <div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: gray;"></div>
+                    </div>
+
+                    <p id="charComName" style="margin-top: 35px; font-size: 14px;"></p>
+
+                    <div class="row" style="margin-top: 25px; margin-left: 2px;">
+                        <p style="margin-top: 5px;">
+                            <input type="text" name="charMessage" id="charMessage" style="margin-right:5px;">
+                            <button type="button" id="sendCharMessage" class="btn btn-outline-success">Submit Message</button>
+                        </p>
+
+                        <div style="margin-top: 25px;">
+                            <textarea rows="5" cols="100" id="charOutput" style="overflow-y: scroll; resize: none" readonly></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="closeCharacterization" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 <script>
@@ -232,6 +246,14 @@
         socket.emit('send message', arr);
         return false;
     }
+
+    function sendWithMsg(comName, message) {
+        var arr = [comName.substr(0, 4), message];
+        console.log(comName.substr(0, 4), message);
+        socket.emit('send message', arr);
+        return false;
+    }
+
     socket.on('port numbers', function(ports) {
         console.log(ports);
         var len = ports.length;
@@ -294,7 +316,7 @@
                     ports[i].module +
                     '</td>' +
                     '<td>' +
-                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
+                    '<button id="' + ports[i].comName + 'openChar"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
                     '</td>' +
                     '<td>' +
                     '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
@@ -338,14 +360,22 @@
     socket.on('data', function(data) {
         $("#output").append('\n');
         $("#output").append(data.data);
-        console.log(data);
+        console.log(data, data.module);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
             var splitData = data.data.split(" ");
 
+            // Grab data from the window and append
+            var allData = document.getElementById('charOutput').value;
+            allData+= data.data + '\n';
+            document.getElementById('charOutput').value = allData;
+
+            // Auto scroll to bottom
+            document.getElementById('charOutput').scrollTop = document.getElementById('charOutput').scrollHeight;
+
             if (splitData[2] == 'red') {
-                $("#dropletSHow").html(
+                $("#dropletShow").html(
                     '<div id="dropletShow" style="width: 50px; height: 50px; -webkit-border-radius: 25px; -moz-border-radius: 25px; border-radius: 25px; background: red;"></div>'
                 );
 
@@ -365,6 +395,9 @@
             allText += '\n';
             document.getElementById("pcr_output").value = allText;
 
+            // Auto scroll to bottom
+            document.getElementById('pcr_output').scrollTop = document.getElementById('pcr_output').scrollHeight;
+
             printStuff(data.data);
         }
     });
@@ -378,16 +411,11 @@
         console.log(data);
     })
 
-    //PCR functions
-  /*  $('#open_pcr').click(function() {
-        $('#pcrModal').modal().show();
-    }); */
-
     // Open Characterization Modal
 
-    function openCharacterization() {
+    function openCharacterization(comName) {
+        document.getElementById("charComName").value = comName.substr(0,4);
         $('#charModal').modal().show();
-        console.log("TRYING TO OPEN");
     }
 
    /* $('#open_characterization').click(function() {
@@ -432,5 +460,12 @@
       socket.emit('send message', arr);
 
     });
+
+    $('#sendCharMessage').click(function(){
+        var enteredMessage = document.getElementById("charMessage").value;
+        sendWithMsg( document.getElementById("charComName").value , enteredMessage);
+        console.log(enteredMessage);
+    })
+
 </script>
 </html>
