@@ -88,9 +88,8 @@
                                                 </div>
                                             </div>
                                             <div class="row" style="margin-top: 25px;">
-                                                <div class="input-field col m12">
-                                                    <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
-                                                </div>
+                                              <button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button>
+                                              <button type="button" id="clearPCR" class="btn btn-outline-success">Clear Output</button>
                                             </div>
                                         </form>
                                     </div>
@@ -432,6 +431,10 @@
       var arr = [document.getElementById("pcrComName").value, " Q "];
       console.log(document.getElementById("pcrComName").value, " Q ");
       socket.emit('send message', arr);
+    });
+
+    $('#clearPCR').click(function(){
+      clearPCR();
     });
 
     $('#submitPCR').click(function(){
