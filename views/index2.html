@@ -167,6 +167,7 @@
     };
 
     var time = 1;
+    var initialValue = true;
 
     var pcrArray = [
         ['Year', 'Desired Temp.', 'Actual Temp.'],
@@ -199,6 +200,10 @@
         }
         if (totalArray.length > 1) {
             pcrArray.push(totalArray);
+            if (initialValue){
+              pcrArray.splice(1,1);
+              initialValue = false;
+            }
             time += 1;
         }
         drawChart();
@@ -211,6 +216,7 @@
             [0, 23, 23]
         ];
         time = 1;
+        initialValue = true;
         drawChart();
     }
 
@@ -357,8 +363,6 @@
     });
 
     socket.on('data', function(data) {
-        $("#output").append('\n');
-        $("#output").append(data.data);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
