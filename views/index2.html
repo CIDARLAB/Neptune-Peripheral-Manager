@@ -359,7 +359,6 @@
     socket.on('data', function(data) {
         $("#output").append('\n');
         $("#output").append(data.data);
-        console.log(data, data.module);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
@@ -463,6 +462,7 @@
       socket.emit('send message', arr);
 
     });
+    //end PCR Modal Buttons
 
     $('#sendCharMessage').click(function(){
         var enteredMessage = document.getElementById("charMessage").value;
