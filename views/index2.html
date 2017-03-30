@@ -61,7 +61,6 @@
                 </div>
                 <div class="modal-body">
                     <div id="chart_div" style="align-content: center; display: flex; justify-content: center;">
-
                     </div>
                     <div class="row" style="margin-top: 50px;">
                         <ul class="nav nav-tabs">
@@ -97,9 +96,8 @@
                                                 </div>
                                             </div>
                                             <div class="row" style="margin-top: 25px;">
-                                                <div class="input-field col m12">
-                                                    <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
-                                                </div>
+                                              <button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button>
+                                              <button type="button" id="clearPCR" class="btn btn-outline-success">Clear Output</button>
                                             </div>
                                         </form>
                                     </div>
@@ -179,6 +177,7 @@
     };
 
     var time = 1;
+    var initialValue = true;
 
     var pcrArray = [
         ['Year', 'Desired Temp.', 'Actual Temp.'],
@@ -211,6 +210,10 @@
         }
         if (totalArray.length > 1) {
             pcrArray.push(totalArray);
+            if (initialValue){
+              pcrArray.splice(1,1);
+              initialValue = false;
+            }
             time += 1;
         }
         drawChart();
@@ -223,6 +226,7 @@
             [0, 23, 23]
         ];
         time = 1;
+        initialValue = true;
         drawChart();
     }
 
@@ -368,7 +372,6 @@
     });
 
     socket.on('data', function(data) {
-        console.log(data);
 
         if (data.module == 'Characterization') {
             console.log('Detected Characterization module!');
@@ -442,6 +445,10 @@
       socket.emit('send message', arr);
     });
 
+    $('#clearPCR').click(function(){
+      clearPCR();
+    });
+
     $('#submitPCR').click(function(){
       finalCommand = "";
       tempCommand = "H";
@@ -468,6 +475,7 @@
       socket.emit('send message', arr);
 
     });
+    //end PCR Modal Buttons
 
     $('#sendCharMessage').click(function(){
         var enteredMessage = document.getElementById("charMessage").value;
