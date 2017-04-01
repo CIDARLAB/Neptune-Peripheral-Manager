@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var serialPort = require('serialport');
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '\\views\\index2.html');
+    res.sendFile(__dirname + '\\views\\index.html');
 });
 
 var serial_connections = {};
