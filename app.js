@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var serialPort = require('serialport');
+var fs = require('fs');
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '\\views\\index.html');
@@ -147,6 +148,11 @@ io.on('connection', function(socket){
         } else{
             socket.emit('error message', 'Error: One of the names is invalid');
         }
+    });
+
+    socket.on('virtual connection', function (data) {
+
+
     });
 
 });
