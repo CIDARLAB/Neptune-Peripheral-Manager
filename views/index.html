@@ -29,6 +29,9 @@
         <div style="margin-bottom: 20px;">
             <button id="get_ports" class="btn btn-primary">Update Page</button> New Name: <input type="text" name="new_name" id="new_name" style="margin-right:40px;">
         </div>
+        <h2>
+            Serial Connections
+        </h2>
         <div>
             <table id='main_table' class="table table-bordered">
                 <tr>
@@ -46,10 +49,27 @@
         <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
             name="connection_destination" id="connection_destination">
     </div>
-    <div>
+
+    <div style="margin-bottom: 20px">
         Input: <input type="text" name="message" id="message" style="margin-right:40px;">
     </div>
 
+    <div>
+        <button id="create_virtual_connection" class="btn btn-primary" onclick=""> Open Virtual Connection</button> File Name: <input type="text" name="virtual_file_name" id="virtual_file_name">
+    </div>
+    <div>
+        <h2>
+            Virtual Connections Table
+        </h2>
+        <div>
+            <table id="virtual_table" class="table table-bordered">
+                <tr>
+                    <th>File Name</th>
+                    <th>Log</th>
+                </tr>
+            </table>
+        </div>
+    </div>
 
     <!----------------------------------------- PCR Modal -------------------------------------------------->
     <div class="modal fade" id="pcrModal" role="dialog">
@@ -246,24 +266,31 @@
         socket.emit('establish connection', arr);
     });
 
+    $('#create_virtual_connection').click(function() {
+       socket.emit('virtual connection', $('#virtual_file_name').val());
+    });
+    function log(comName) {
+        socket.emit('virtual message', [comName.substr(0, comName.length - 4), $("#message").val()])
+    }
+
     function tableConnectButtonClick(comName, action) {
         socket.emit(action, comName);
     }
 
     function tableUpdateName(comName) {
-        socket.emit('update name', [comName.substr(0, 4), $("#new_name").val()]);
-        console.log(comName.substr(0, 4), $("#new_name").val());
+        socket.emit('update name', [comName.substr(0, comName.length - 4), $("#new_name").val()]);
+        console.log(comName.substr(0, comName.length - 4), $("#new_name").val());
     }
 
     function send(comName) {
-        var arr = [comName.substr(0, 4), $("#message").val()];
+        var arr = [comName.substr(0, comName.length - 4), $("#message").val()];
         socket.emit('send message', arr);
         return false;
     }
 
     function sendWithMsg(comName, message) {
-        var arr = [comName.substr(0, 4), message];
-        console.log(comName.substr(0, 4), message);
+        var arr = [comName.substr(0, comName.length - 4), message];
+        console.log(comName.substr(0, comName.length - 4), message);
         socket.emit('send message', arr);
         return false;
     }
@@ -271,7 +298,7 @@
     socket.on('port numbers', function(ports) {
         console.log(ports);
         var len = ports.length;
-        var options = [];
+
         $("#main_table").html(
             "<table id='main_table' class='table table-bordered'>" +
             '<tr>' +
@@ -284,90 +311,105 @@
             '</tr>' +
             '</table>'
         );
+        $("#virtual_table").html(
+            '<table id="virtual_table" class="table table-bordered">' +
+            '<tr>' +
+            '<th>File Name</th>'+
+            '<th>Log</th>'+
+            '</tr>'+
+            '</table>'
+        );
         for (var i = 0; i < len; i++) {
-            options.push('<option value="',
-                ports[i].comName, '">',
-                ports[i].comName, '</option>');
+            if(ports[i].type == 'real') {
+                if (ports[i].module == 'PCR') {
+                    var html = '<tr>' +
+                        '<td>' +
+                        ports[i].comName +
+                        '</td>' +
+                        '<td id="' + ports[i].comName + '">' +
+                        '<button id="' + ports[i].comName + '"' +
+                        ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                        ' value="' + ports[i].connected + '">' +
+                        ports[i].connected +
+                        '</button>' +
+                        '</td>' +
+                        '<td>' +
+                        ports[i].module +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                        '</td>' +
+                        '</tr>';
+                } else if (ports[i].module == 'Characterization') {
+                    var html = '<tr>' +
+                        '<td>' +
+                        ports[i].comName +
+                        '</td>' +
+                        '<td id="' + ports[i].comName + '">' +
+                        '<button id="' + ports[i].comName + '"' +
+                        ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                        ' value="' + ports[i].connected + '">' +
+                        ports[i].connected +
+                        '</button>' +
+                        '</td>' +
+                        '<td>' +
+                        ports[i].module +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'openChar"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                        '</td>' +
+                        '</tr>';
+                } else {
+                    var html = '<tr>' +
+                        '<td>' +
+                        ports[i].comName +
+                        '</td>' +
+                        '<td id="' + ports[i].comName + '">' +
+                        '<button id="' + ports[i].comName + '"' +
+                        ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
+                        ' value="' + ports[i].connected + '">' +
+                        ports[i].connected +
+                        '</button>' +
+                        '</td>' +
+                        '<td>' +
+                        ports[i].module +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary">Control</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
+                        '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
+                        '</td>' +
+                        '</tr>';
+                }
 
-            if (ports[i].module == 'PCR') {
-                var html = '<tr>' +
-                    '<td>' +
-                    ports[i].comName +
-                    '</td>' +
-                    '<td id="' + ports[i].comName + '">' +
-                    '<button id="' + ports[i].comName + '"' +
-                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
-                    ' value="' + ports[i].connected + '">' +
-                    ports[i].connected +
-                    '</button>' +
-                    '</td>' +
-                    '<td>' +
-                    ports[i].module +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
-                    '</td>' +
-                    '</tr>';
-            } else if (ports[i].module == 'Characterization') {
-                var html = '<tr>' +
-                    '<td>' +
-                    ports[i].comName +
-                    '</td>' +
-                    '<td id="' + ports[i].comName + '">' +
-                    '<button id="' + ports[i].comName + '"' +
-                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
-                    ' value="' + ports[i].connected + '">' +
-                    ports[i].connected +
-                    '</button>' +
-                    '</td>' +
-                    '<td>' +
-                    ports[i].module +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'openChar"  class="btn btn-primary" onclick="openCharacterization(this.id)">Open Characterization Modal</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
-                    '</td>' +
-                    '</tr>';
-            } else {
-                var html = '<tr>' +
-                    '<td>' +
-                    ports[i].comName +
-                    '</td>' +
-                    '<td id="' + ports[i].comName + '">' +
-                    '<button id="' + ports[i].comName + '"' +
-                    ' onclick="tableConnectButtonClick(this.id, this.value)" class="btn btn-secondary"' +
-                    ' value="' + ports[i].connected + '">' +
-                    ports[i].connected +
-                    '</button>' +
-                    '</td>' +
-                    '<td>' +
-                    ports[i].module +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'openPCR"  class="btn btn-primary">Control</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'send" ' + 'class="btn btn-secondary" onclick="send(this.id)">Send Message</button>' +
-                    '</td>' +
-                    '<td>' +
-                    '<button id="' + ports[i].comName + 'name" class="btn btn-secondary" onclick="tableUpdateName(this.id)"> Set Name</button>' +
-                    '</td>' +
-                    '</tr>';
+                $("#main_table").append(html);
             }
-            $("#main_table").append(html);
+            else{
+                var html2 = '<tr>' +
+                        '<td>' + ports[i].comName + '</td>' +
+                        '<td>' +
+                        '<button id="' + ports[i].comName +'send"' + ' class="btn btn-secondary" onclick="log(this.id)">Write Here</button>' +
+                        '</td>' +
+                        '</tr>';
+                $("#virtual_table").append(html2);
+            }
         }
-        $("#selectNumber").html(options.join(''));
 
     });
 
@@ -425,13 +467,10 @@
     // Open Characterization Modal
 
     function openCharacterization(comName) {
-        document.getElementById("charComName").value = comName.substr(0,4);
+        document.getElementById("charComName").value = comName.substr(0, comName.length - 4);
         $('#charModal').modal().show();
     }
 
-   /* $('#open_characterization').click(function() {
-        $('#characterizationModal').modal().show();
-    }); */
 
     //PCR modal
     function openPCR(newName) {

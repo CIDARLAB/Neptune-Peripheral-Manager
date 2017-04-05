@@ -12,6 +12,8 @@ var serial_connections = {};
 var serial_connections_details = {};
 var custom_connections = {};
 
+var virtual_connections = {};
+
 io.on('connection', function(socket){
 
     socket.on('get ports', function
@@ -23,6 +25,7 @@ io.on('connection', function(socket){
                 if (ports[connection].comName in serial_connections) {
                     o.push({
                         comName: ports[connection].comName,
+                        type: 'real',
                         connected: 'Disconnect',
                         name: serial_connections_details[ports[connection].comName].name,
                         module: serial_connections_details[ports[connection].comName].module
@@ -31,11 +34,18 @@ io.on('connection', function(socket){
                 else {
                     o.push({
                         comName: ports[connection].comName,
+                        type: 'real',
                         connected: 'Connect',
                         name: 'not defined',
                         module: 'not defined'
                     });
                 }
+            }
+            for (var word in virtual_connections) {
+                o.push({
+                    comName: word,
+                    type: 'virtual'
+                })
             }
             socket.emit('port numbers', o);
         });
@@ -151,8 +161,25 @@ io.on('connection', function(socket){
     });
 
     socket.on('virtual connection', function (data) {
+        virtual_connections[data] = 'connected';
+        fs.writeFile(data, "hello", function (err) {
+            if (err){
+                socket.emit('error message', err);
+                return console.log(err);
+            }
+            console.log('Successfully Saved');
+        })
+    });
 
-
+    socket.on('virtual message', function(data) {
+        console.log(data);
+        fs.writeFile(data[0], data[1], {'flag': 'a'}, function (err) {
+            if (err){
+                socket.emit('error message', err);
+                return console.log(err);
+            }
+            console.log('Successfully Saved');
+        });
     });
 
 });
