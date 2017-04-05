@@ -25,7 +25,7 @@
     "url": "git+https://github.com/CIDARLAB/Neptune-Peripheral-Manager.git"
   },
   "author": "Anish Asthana",
-  "license": "BS-2",
+  "license": "BSD-2",
   "bugs": {
     "url": "https://github.com/CIDARLAB/Neptune-Peripheral-Manager/issues"
   },
