@@ -1,9 +1,9 @@
 {
   "name": "neptune-peripheral-manager",
-  "version": "0.0.1",
+  "version": "1.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
@@ -24,8 +24,8 @@
     "type": "git",
     "url": "git+https://github.com/CIDARLAB/Neptune-Peripheral-Manager.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Anish Asthana",
+  "license": "BS-2",
   "bugs": {
     "url": "https://github.com/CIDARLAB/Neptune-Peripheral-Manager/issues"
   },
