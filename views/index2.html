@@ -44,6 +44,7 @@
                 <button id="establish_connection" class="btn btn-primary">Establish Connection</button> Peripheral Connection Source: <input type="text" name="connection_source" id="connection_source"> Peripheral Connection Destination: <input type="text"
                     name="connection_destination" id="connection_destination">
             </div>
+            <button id="openPCR"  class="btn btn-primary" onclick="openPCR(this.id)">Open PCR Modal</button>
 
             <div>
             </div>
@@ -58,6 +59,11 @@
                         </div>
                         <div class="modal-body">
                             <div id="chart_div" style="align-content: center; display: flex; justify-content: center;"></div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped active" id="bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+                                    Current Cycle 2 of 20
+                                </div>
+                            </div>
                             <div class "row" style="margin-top: 50px;">
                                 <ul class="nav nav-tabs">
                                     <li><a data-toggle="tab" href="#menu1">Output</a></li>
@@ -73,10 +79,10 @@
                                         <div style="margin-top: 25px; margin-left: 50px;">
                                             <div class="row">
                                                 <form class="col m12">
-                                                  <div class = "row">
-                                                    <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
-                                                    <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
-                                                  </div>
+                                                    <div class="row">
+                                                        <label for="pcrComName" style="font-size: 16px;">COM Name: </label>
+                                                        <input id="pcrComName" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
+                                                    </div>
                                                     <div class="row">
                                                         <label for="temp" style="font-size: 16px;">Temperatures: </label>
                                                         <input id="temp" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
@@ -85,31 +91,31 @@
                                                         <label for="repeat" style="font-size: 16px;">Repetitions: </label>
                                                         <input id="repeat" type="text" class="validate" style="margin-top: 35px; font-size: 14px;">
                                                         <input type="checkbox" id="warm">Warmup First
-                                                    <div class="row" style="margin-top: 25px;">
-                                                        <div class="input-field col m12">
-                                                            <p style="margin-top: 5px;"><button type="button" id="submitPCR" class="btn btn-outline-success">Submit Command</button></p>
+                                                        <div class="row" style="margin-top: 25px; margin-left: 2px;">
+                                                            <div class="input-field col m12">
+                                                                <p><button type="button" id="submitPCR" class="btn btn-primary">Submit Command</button></p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row" style="margin-top: 25px;">
-                                                        <div class="input-field col m12">
-                                                            <p style="margin-top: 5px;"><button type="button" id="quitPCR" class="btn btn-outline-success">Quit Cycle</button></p>
+                                                        <div class="row" style="margin-top: 15px; margin-left: 2px;">
+                                                            <div class="input-field col m12">
+                                                                <p><button type="button" id="quitPCR" class="btn btn-primary">Quit Cycle</button></p>
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                 </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <div class="modal-footer">
+                                <button id="close_pcr" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 <script>
     //PCR functions
@@ -287,40 +293,45 @@
 
     //PCR modal
     function openPCR(newName) {
-      document.getElementById("pcrComName").value = newName.substr(0, 4);
-      $('#pcrModal').modal().show();
+        document.getElementById("pcrComName").value = newName.substr(0, 4);
+        $('#pcrModal').modal().show();
     }
 
-    $('#quitPCR').click(function(){
-      var arr = [document.getElementById("pcrComName").value, " Q "];
-      console.log(document.getElementById("pcrComName").value, " Q ");
-      socket.emit('send message', arr);
+    function updateProgressBar(newValue){
+      strVal = newValue.toString()+'%';
+      $("#bar").css("width",strVal);
+      $("#bar").text(strVal);
+    }
+
+    $('#quitPCR').click(function() {
+        var arr = [document.getElementById("pcrComName").value, " Q "];
+        console.log(document.getElementById("pcrComName").value, " Q ");
+        socket.emit('send message', arr);
     });
 
-    $('#submitPCR').click(function(){
-      finalCommand = "";
-      tempCommand = "H";
-      timeCommand = "T";
-      repeatAmount = parseFloat(document.getElementById("repeat").value);
+    $('#submitPCR').click(function() {
+        finalCommand = "";
+        tempCommand = "H";
+        timeCommand = "T";
+        repeatAmount = parseFloat(document.getElementById("repeat").value);
+        updateProgressBar(repeatAmount);
+        for (var i = 0; i < repeatAmount; i++) {
+            tempCommand += " " + document.getElementById("temp").value;
+            timeCommand += " " + document.getElementById("time").value;
+        }
+        tempCommand += " S ";
+        timeCommand += " S ";
 
-      for (var i = 0; i < repeatAmount; i++){
-        tempCommand += " "+document.getElementById("temp").value;
-        timeCommand += " "+document.getElementById("time").value;
-      }
-      tempCommand+=" S ";
-      timeCommand+=" S ";
+        if (document.getElementById('warm').checked) {
+            finalCommand += "W " + timeCommand + tempCommand;
+        } else {
+            finalCommand += timeCommand + tempCommand;
+        }
+        console.log(finalCommand);
 
-      if(document.getElementById('warm').checked){
-        finalCommand+="W "+ timeCommand + tempCommand;
-      }
-      else{
-        finalCommand+= timeCommand + tempCommand;
-      }
-      console.log(finalCommand);
-
-      var arr = [document.getElementById("pcrComName").value, finalCommand];
-      console.log(document.getElementById("pcrComName").value, finalCommand);
-      socket.emit('send message', arr);
+        var arr = [document.getElementById("pcrComName").value, finalCommand];
+        console.log(document.getElementById("pcrComName").value, finalCommand);
+        socket.emit('send message', arr);
 
     });
 </script>
