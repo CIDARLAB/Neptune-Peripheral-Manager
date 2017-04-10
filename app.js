@@ -57,16 +57,19 @@ io.on('connection', function(socket){
                     }
                     serial_connections[port_name].on('data', function (data) {
                         console.log(data);
-                        if (data.substr(0,12) === "Module Type:") {
-                            serial_connections_details[port_name].module = data.substr(13);
+                        if(data.length >=12) {
+                            if (data.substr(0, 12) === "Module Type:") {
+                                serial_connections_details[port_name].module = data.substr(13);
+                                return;
+                            }
                         }
-                        else {
-                            socket.emit('data',
-                                {
-                                    'comName': port_name,
-                                    'data': data
-                                });
-                        }
+                        socket.emit('data',
+                            {
+                                'comName': port_name,
+                                'data': data,
+                                'name': serial_connections_details[port_name].name,
+                                'module': serial_connections_details[port_name].module
+                            });
                     });
 
                     serial_connections[port_name].write('Hello', function (err) {
