@@ -3,9 +3,12 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var serialPort = require('serialport');
 var fs = require('fs');
+const path = require('path');
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '\\views\\index.html');
+    var filePath = path.join(__dirname , '/views/index.html');
+    path.normalize(filePath);
+    res.sendFile(path.resolve(filePath));
 });
 
 var serial_connections = {};
